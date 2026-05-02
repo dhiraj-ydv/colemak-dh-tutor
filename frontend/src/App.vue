@@ -300,7 +300,7 @@ onMounted(() => {
       </div>
 
       <!-- FIXED VISUALIZER SECTION -->
-      <div class="visualizer-section">
+      <div v-if="currentView === 'lesson' && !showStats" class="visualizer-section">
         <Keyboard :activeKey="activeKey" :targetKey="targetKey" />
       </div>
 
