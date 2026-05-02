@@ -125,6 +125,28 @@ const handleFileUpload = (event: Event) => {
   reader.readAsText(file);
 };
 
+const stopApp = async () => {
+  if (confirm('Are you sure you want to stop the application? Both backend and frontend will be shut down.')) {
+    try {
+      await fetch('http://localhost:5000/api/system/stop', { method: 'POST' });
+    } catch (e) {
+      // Expecting network error as server shuts down
+    }
+    alert('Application is stopping. You can close this tab now.');
+  }
+};
+
+const restartApp = async () => {
+  if (confirm('Restart the application? This will reload all processes.')) {
+    try {
+      await fetch('http://localhost:5000/api/system/restart', { method: 'POST' });
+    } catch (e) {
+      // Expecting network error
+    }
+    alert('Application is restarting. Please wait a few seconds and then refresh this page.');
+  }
+};
+
 onMounted(() => {
   fetchLessons();
   fetchHistory();
@@ -176,6 +198,11 @@ onMounted(() => {
             </li>
           </ul>
         </div>
+      </div>
+
+      <div class="drawer-footer">
+        <button class="system-btn restart" @click="restartApp">🔄 Restart App</button>
+        <button class="system-btn stop" @click="stopApp">🛑 Stop App</button>
       </div>
     </aside>
 
@@ -443,4 +470,33 @@ onMounted(() => {
 .history-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .wpm-val { color: var(--primary-color); font-weight: 700; }
 .acc-val { color: var(--accent-color); font-weight: 700; }
+
+.drawer-footer {
+  margin-top: auto;
+  padding: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.system-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  justify-content: center;
+}
+
+.system-btn.restart:hover {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.system-btn.stop:hover {
+  background: var(--error-color);
+  color: white;
+  border-color: var(--error-color);
+}
 </style>

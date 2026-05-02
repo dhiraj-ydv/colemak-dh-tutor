@@ -3,6 +3,49 @@ from .app import db
 from .models import User, Lesson, Progress
 from flask import current_app as app
 
+import os
+import signal
+import psutil
+from flask import request, jsonify
+
+@app.route('/api/system/stop', methods=['POST'])
+def stop_app():
+    # Write a trigger file for the batch script to exit
+    with open('stop.trigger', 'w') as f:
+        f.write('stop')
+    
+    # Kill frontend (node/vite)
+    for proc in psutil.process_iter(['pid', 'name', 'connections']):
+        try:
+            for conn in proc.connections():
+                if conn.laddr.port == 5175: # Frontend port
+                    proc.kill()
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+            
+    # Kill self (backend)
+    os.kill(os.getpid(), signal.SIGTERM)
+    return jsonify({'status': 'stopping'})
+
+@app.route('/api/system/restart', methods=['POST'])
+def restart_app():
+    # Write a trigger file for the batch script to restart
+    with open('restart.trigger', 'w') as f:
+        f.write('restart')
+        
+    # Kill frontend
+    for proc in psutil.process_iter(['pid', 'name', 'connections']):
+        try:
+            for conn in proc.connections():
+                if conn.laddr.port == 5175:
+                    proc.kill()
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+
+    # Kill self
+    os.kill(os.getpid(), signal.SIGTERM)
+    return jsonify({'status': 'restarting'})
+
 @app.route('/api/lessons', methods=['GET'])
 def get_lessons():
     lessons = Lesson.query.all()

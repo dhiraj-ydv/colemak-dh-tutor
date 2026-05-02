@@ -47,19 +47,15 @@ A full-stack web application designed to help users master the Colemak-DH keyboa
 
 ### Running the App
 
-1. **Start the Backend:**
-   ```bash
-   # From the root directory
-   python run.py
-   ```
-   The backend will run on [http://localhost:5000](http://localhost:5000).
+1. **Recommended (Windows):**
+   Simply double-click the **`start.bat`** file in the root directory. This will:
+   - Launch the backend and frontend in the background.
+   - Automatically manage process life-cycles.
+   - Support **Stop** and **Restart** commands directly from the web app's menu.
 
-2. **Start the Frontend:**
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-   The frontend will run on [http://localhost:5175](http://localhost:5175) (or similar).
+2. **Manual Start:**
+   - **Backend:** `python run.py` (from root)
+   - **Frontend:** `npm run dev` (from `frontend` folder)
 
 ## Usage
 - Click the **☰ menu** to select lessons or access Custom Practice.
